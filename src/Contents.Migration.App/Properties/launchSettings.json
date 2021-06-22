@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Contents.Migration.App": {
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

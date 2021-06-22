@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  contents.api:
+    image: ${DOCKER_REGISTRY-}contentsapi
+    build:
+      context: .
+      dockerfile: Contents.Api/Dockerfile
+
+  contents.migration.app:
+    image: ${DOCKER_REGISTRY-}contentsmigrationapp
+    build:
+      context: .
+      dockerfile: Contents.Migration.App/Dockerfile
+  mongodb:
+    image: mongo:latest
+    ports:
+        - "27017:27017"
+    container_name: db
+

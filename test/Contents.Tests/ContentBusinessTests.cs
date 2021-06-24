@@ -33,18 +33,15 @@ namespace Contents.Tests
         }
 
         /// <summary>
-        /// Update current order with expected order.
+        /// 
         /// </summary>
-        /// <param name="beforeOrder"> represent already saved ordered contents -- currentorder </param>
-        /// <param name="orderUpdateModel">represent after update order of contents -- expectedorder</param>
+        /// <param name="beforeOrder"> current ordered contents in database </param>
+        /// <param name="editorChanges"> editor changes about ordered contents </param>
+        /// <param name="afterOrder">  </param>
         [MemberData(nameof(MockData))]
         [Theory]
         public void ReorderContents_Should_Update_Contents_Order_Correctly(OrderedContent beforeOrder, List<ContentSaveModel> editorChanges, LookedUpOrderedContent afterOrder)
         {
-            string orderedContentName = afterOrder.Name;
-            _mockOrderedContentRepository.Setup(x => x.FindOne(x => x.Name == orderedContentName))
-                .Returns(beforeOrder);
-
             string orderedName = beforeOrder.Name;
             _mockOrderedContentRepository.Setup(x => x.Aggregate<LookedUpOrderedContent>(
                 x => x.Name == orderedName,
@@ -55,8 +52,11 @@ namespace Contents.Tests
 
             _contentService.UpdateOrderedContentAsync(beforeOrder.Name, editorChanges);
 
-            var actualResult = _contentService.GetContentsByOrderedName(beforeOrder.Name);
+            string orderedContentName = afterOrder.Name;
+            _mockOrderedContentRepository.Setup(x => x.FindOne(x => x.Name == orderedContentName))
+                .Returns(beforeOrder);
 
+            var actualResult = _contentService.GetContentsByOrderedName(beforeOrder.Name);
 
             actualResult.Data.OrderedName.Should().Be(afterOrder.Name);
             actualResult.Data.Contents.Count.Should().Be(afterOrder.Contents.Count);
@@ -64,10 +64,9 @@ namespace Contents.Tests
             foreach (var content in actualResult.Data.Contents)
             {
                 var itemAfterOrder = afterOrder.Contents.Single(x => x.Id.ToString() == content.Id);
+
                 itemAfterOrder.Should().NotBeNull();
-
                 itemAfterOrder.OrderValue.Should().Be(content.OrderValue);
-
             }
         }
 

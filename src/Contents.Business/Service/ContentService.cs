@@ -118,13 +118,23 @@ namespace Contents.Business.Service
                 return result;
             }
 
-            var reorderedContents = ReorderContents(orderedContent, contentUpdateModel);
+            var orderList = contentUpdateModel.Select(x => new ObjectId(x.ContentId)).ToList();
+            foreach (var contentItem in orderedContent.Contents.ToList())
+            {
+                var orderIndex = orderList.FindIndex(x => x == contentItem.Id);
+                if(orderIndex == -1)
+                {
+                    orderedContent.Contents.Remove(contentItem);
+                }
 
-            var replaceResult = await _orderedContentRepository.ReplaceOneAsync(x => x.Id == reorderedContents.Id, reorderedContents);
+                contentItem.OrderValue = orderIndex;
+            }
+
+            var replaceResult = await _orderedContentRepository.ReplaceOneAsync(x => x.Id == orderedContent.Id, orderedContent);
             if (replaceResult.MatchedCount < 1)
             {
                 result.IsSuccess = false;
-                result.Data = reorderedContents.Id.ToString();
+                result.Data = orderedContent.Id.ToString();
             }
 
             return result;
@@ -132,15 +142,46 @@ namespace Contents.Business.Service
 
         public OrderedContent ReorderContents(OrderedContent orderedContent, List<ContentSaveModel> contentUpdateModel)
         {
-            var orderList = new List<ObjectId>();
-            orderList = contentUpdateModel.Select(x => new ObjectId(x.ContentId)).ToList();
-            foreach (var contentItem in orderedContent.Contents)
-            {
-                var orderIndex = orderList.FindIndex(x => x == contentItem.Id);
-                contentItem.OrderValue = orderIndex;
-            }
+
 
             return orderedContent;
+        }
+
+        public async Task<ContentUpdateResult> UpdateContent(string contentId, ContentModel content)
+        {
+            var contentUpdateResult = new ContentUpdateResult();
+            var documentId = new ObjectId(contentId);
+
+            var currentContent = _contentRepository.FindOne(x => x.Id == documentId);
+            if (currentContent == null)
+            {
+                contentUpdateResult.IsSuccess = false;
+                contentUpdateResult.Message = $"{contentId} content not found";
+
+                return contentUpdateResult;
+            }
+
+            var contentEntity = new Content
+            {
+                Id = documentId,
+                Description = content.Description,
+                Title = content.Title,
+                Url = content.Url
+            };
+
+            var replaceResult = await _contentRepository.ReplaceOneAsync(x => x.Id == documentId, contentEntity);
+
+            if (replaceResult.ModifiedCount == 0)
+            {
+                contentUpdateResult.IsSuccess = false;
+                contentUpdateResult.Message = $"{contentId} content cant updated";
+
+                return contentUpdateResult;
+            }
+
+            contentUpdateResult.Data = contentId;
+
+            return contentUpdateResult;
         }
     }
 }

@@ -13,12 +13,12 @@ namespace Contents.Api.Controllers
     public class ContentsController : ControllerBase
     {
         private readonly IContentService _contentService;
+
         public ContentsController(IContentService contentService)
         {
             _contentService = contentService;
         }
 
-        // GET: api/<ContentsController>
         [HttpGet]
         public async Task<ActionResult> GetAsync()
         {
@@ -31,11 +31,23 @@ namespace Contents.Api.Controllers
             return Ok(result.Data);
         }
 
-        // GET: api/<ContentsController>/<name>
-        [HttpGet("{name}")]
-        public ActionResult<ContensByOrderedName> GetByOrderedName(string name)
+        [HttpPut("{contentId}")]
+        public async Task<ActionResult> UpdateContentAsync(string contentId , [FromBody]ContentModel content)
         {
-            var result = _contentService.GetContentsByOrderedName(name);
+            var updateResult = await _contentService.UpdateContent(contentId, content);
+            if (!updateResult.IsSuccess)
+            {
+                return BadRequest(updateResult.Message);
+            }
+
+            return NoContent();
+        }
+
+
+        [HttpGet("ordered/{orderedName}")]
+        public ActionResult<ContensByOrderedName> GetByOrderedName(string orderedName)
+        {
+            var result = _contentService.GetContentsByOrderedName(orderedName);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Message);
@@ -44,22 +56,20 @@ namespace Contents.Api.Controllers
             return Ok(result?.Data);
         }
 
-        // POST api/<ContentsController>/<orderedName>
-        [HttpPost("{orderedName}")]
-        public async Task<ActionResult> PostAsync(string orderedName, [FromBody] OrderedContentPost model)
+        [HttpPost("ordered")]
+        public async Task<ActionResult> PostOrderedContentAsync([FromBody] OrderedContentPost model)
         {
-            var result = await _contentService.InsertOrderedContentAsync(orderedName, model.Data);
+            var result = await _contentService.InsertOrderedContentAsync(model.Name, model.Data);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Message);
             }
 
-            return Created($"/{orderedName}", null);
+            return Created($"/{model.Name}", null);
         }
 
-        // PUT api/<ContentsController>/<orderedName>
-        [HttpPut("{orderedName}")]
-        public async Task<ActionResult> PutAsync(string orderedName, [FromBody] OrderedContentPost model)
+        [HttpPut("ordered/{orderedName}")]
+        public async Task<ActionResult> PutOrderedContentAsync(string orderedName, [FromBody] OrderedContentPost model)
         {
             var result = await _contentService.UpdateOrderedContentAsync(orderedName, model.Data);
             if(!result.IsSuccess)

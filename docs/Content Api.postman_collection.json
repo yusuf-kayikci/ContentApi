@@ -1,0 +1,154 @@
+{
+	"info": {
+		"_postman_id": "00e49a45-b961-4034-8056-a024f35b2504",
+		"name": "Content Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Contents",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"OrderedContentName\": \"yusuf_list\",\r\n    \"OrderedContents\" : [\r\n        { \"Id\" : \"60cfd280b33ed3761f69cc92\" , \"OrderValue\" : 1 },\r\n        { \"Id\" : \"60cfd280b33ed3761f69cc93\" , \"OrderValue\" : 2 },\r\n        { \"Id\" : \"60cfd280b33ed3761f69cc94\" , \"OrderValue\" : 3 }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44304/api/contents",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44304",
+					"path": [
+						"api",
+						"contents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Content",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Title\" : \"Yusuf kayikci\",\r\n    \"Description\" : \"News1 description\",\r\n    \"Url\" : \"http://www.google.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44304/api/contents/60d118706d4b05bc60e44e7f",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44304",
+					"path": [
+						"api",
+						"contents",
+						"60d118706d4b05bc60e44e7f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Ordered Contents",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Name\" : \"manset-kutusu-2\",\r\n    \"Data\": [\r\n         {\"ContentId\" : \"60d118706d4b05bc60e44e7f\" },\r\n         {\"ContentId\" : \"60d118706d4b05bc60e44e80\" },         \r\n         {\"ContentId\" : \"60d118706d4b05bc60e44e87\" },\r\n         {\"ContentId\" : \"60d118706d4b05bc60e44e88\" }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44304/api/contents/ordered",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44304",
+					"path": [
+						"api",
+						"contents",
+						"ordered"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get By Ordered Name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44304/api/contents/ordered/manset-kutusu-2",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44304",
+					"path": [
+						"api",
+						"contents",
+						"ordered",
+						"manset-kutusu-2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Ordered Content (Reorder)",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Data\": [\r\n         {\"ContentId\" : \"60d118706d4b05bc60e44e7f\" },\r\n         {\"ContentId\" : \"60d118706d4b05bc60e44e80\" },\r\n         {\"ContentId\" : \"60d118706d4b05bc60e44e88\" }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44304/api/contents/ordered/yusuf-list",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44304",
+					"path": [
+						"api",
+						"contents",
+						"ordered",
+						"yusuf-list"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

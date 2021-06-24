@@ -46,11 +46,11 @@ namespace Contents.Business.Service
             var selectResult = new OrderedContentSelectResult();
 
             var orderedContents = _orderedContentRepository.Aggregate<LookedUpOrderedContent>(
-                filterExpression: x => x.Name == orderedName,
-                from: "contents",
-                localField: "Contents.Id",
-                foreignField: "_id",
-                @as: "ContentDocs");
+                x => x.Name == orderedName,
+                "contents",
+                "Contents.Id",
+                "_id",
+                "ContentDocs");
 
             if (orderedContents == null)
             {
